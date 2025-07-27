@@ -1,1 +1,210 @@
-# TO-DO-LIST
+[Uploading style.csbody {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #74ebd5, #9face6);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  background-color: #ffffffee;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  max-width: 500px;
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+input[type="text"], select, input[type="datetime-local"] {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1.2em;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+li {
+  background: #f0f8ff;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+li:hover {
+  transform: scale(1.01);
+}
+
+.done {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.timestamp {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.category {
+  font-size: 0.9em;
+  color: #6a5acd;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete {
+  color: #ff5e5e;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.3);
+  accent-color: #4CAF50;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <input type="text" id="taskInput" placeholder="Tambah tugas..." />
+    <input type="datetime-local" id="datetimeInput" />
+    <select id="categoryInput">
+      <option value="Pekerjaan">Pekerjaan</option>
+      <option value="Sekolah">Sekolah</option>
+      <option value="Pribadi">Pribadi</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+    <button onclick="addTask()">Tambah</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function renderTasks() {
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+  tasks.forEach((task, index) => {
+    const statusClass = task.done ? "done" : "";
+    const checked = task.done ? "checked" : "";
+
+    list.innerHTML += `
+      <li>
+        <div>
+          <span class="${statusClass}">${task.text}</span><br>
+          <span class="timestamp">${task.timestamp}</span><br>
+          <span class="category">${task.category}</span>
+        </div>
+        <div class="controls">
+          <input type="checkbox" onchange="toggleDone(${index})" ${checked} />
+          <span class="delete" onclick="deleteTask(${index})">❌</span>
+        </div>
+      </li>`;
+  });
+}
+
+function addTask() {
+  const textInput = document.getElementById("taskInput");
+  const datetimeInput = document.getElementById("datetimeInput");
+  const categoryInput = document.getElementById("categoryInput");
+
+  const text = textInput.value.trim();
+  const datetimeValue = datetimeInput.value;
+  const category = categoryInput.value;
+
+  if (text !== "" && datetimeValue !== "") {
+    const dateObj = new Date(datetimeValue);
+
+    const jam = dateObj.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const tanggal = dateObj.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+    const timestamp = `${tanggal} ${jam}`;
+
+    tasks.push({ text, timestamp, done: false, category });
+    textInput.value = "";
+    datetimeInput.value = "";
+    categoryInput.value = "Pekerjaan";
+    saveTasks();
+    renderTasks();
+  } else {
+    alert("Mohon isi tugas dan tanggal/waktu.");
+  }
+}
+
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  saveTasks();
+  renderTasks();
+}
+
+function toggleDone(index) {
+  tasks[index].done = !tasks[index].done;
+  saveTasks();
+  renderTasks();
+}
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+renderTasks();
+s…]()
